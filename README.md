@@ -58,7 +58,7 @@
 ```mermaid
 flowchart TD
     A[CSV / JSON Data] --> B[CSVParser / Data Validation]
-    B --> C[TemplateEngine (Jinja2)]
+    B --> C[TemplateEngine Jinja2]
     C --> D[CampaignEngine Orchestration]
     D --> E[SMTPProvider / APIProvider]
     D --> F[AttachmentService]

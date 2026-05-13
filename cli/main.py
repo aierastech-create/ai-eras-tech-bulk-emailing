@@ -1,6 +1,13 @@
 import argparse
+import sys
+import os
+
+# Fix for ModuleNotFoundError when running from subdirectories
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from services.campaign import CampaignEngine
 from infra.logger import logger
+from infra.config import Config
 
 
 def main():
@@ -17,6 +24,9 @@ def main():
     args = parser.parse_args()
 
     try:
+        # Validate configuration before starting
+        Config.validate()
+
         with open(args.template, "r", encoding="utf-8") as f:
             template_str = f.read()
 

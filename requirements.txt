@@ -1,3 +1,6 @@
 jinja2
 python-dotenv
 markdown
+fastapi
+uvicorn
+python-multipart

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailForge | Premium Bulk Email Engine</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/ui/style.css?v=1.1">
+</head>
+<body>
+    <header>
+        <div class="logo-group">
+            <span class="icon">🚀</span>
+            <h1>MailForge</h1>
+        </div>
+        <div class="system-badge">
+            <div class="dot"></div>
+            Engine Operational
+        </div>
+    </header>
+
+    <main>
+        <!-- Stats Row -->
+        <section class="stats-grid">
+            <div class="stat-box">
+                <span class="stat-label">Total Emails</span>
+                <span class="stat-value" id="stat-sent">0</span>
+                <span class="stat-sub">Delivered successfully</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Average Open Rate</span>
+                <span class="stat-value" id="stat-open-rate">0%</span>
+                <span class="stat-sub" id="stat-opens">0 total opens</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Avg Click Rate</span>
+                <span class="stat-value" id="stat-click-rate">0%</span>
+                <span class="stat-sub" id="stat-clicks">0 total clicks</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">Queued Tasks</span>
+                <span class="stat-value" id="stat-active">0</span>
+                <span class="stat-sub">Awaiting execution</span>
+            </div>
+        </section>
+
+        <!-- Setup Card -->
+        <section class="card setup-card">
+            <h2 class="card-title">Campaign Launcher</h2>
+            <div class="form-scroll">
+                <form id="campaign-form">
+                    <div class="input-group">
+                        <label>Campaign Name</label>
+                        <input type="text" id="campaign_name" placeholder="e.g. Summer Outreach 2024" class="input-field">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="input-group">
+                            <label>Rate Limit (sec)</label>
+                            <input type="number" id="rate_limit" value="1.0" step="0.1" class="input-field">
+                        </div>
+                        <div class="input-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 1.8rem;">
+                                <input type="checkbox" id="schedule-toggle"> Schedule for later
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="schedule-options" style="display: none; margin-bottom: 1rem;">
+                        <div class="input-group">
+                            <label>Execution Time</label>
+                            <input type="datetime-local" id="scheduled_at" class="input-field">
+                        </div>
+                    </div>
+
+                    <div class="upload-row">
+                        <div class="upload-btn" id="csv-drop-zone">
+                            <input type="file" id="csv_file" accept=".csv" hidden>
+                            <span class="icon">📄</span>
+                            <p>Recipients CSV</p>
+                            <span id="csv-name">None</span>
+                        </div>
+                        <div class="upload-btn" id="template-drop-zone">
+                            <input type="file" id="template_file" accept=".md" hidden>
+                            <span class="icon">✒️</span>
+                            <p>Email Template</p>
+                            <span id="template-name">None</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="start-btn" class="btn-launch">Launch Engine</button>
+                    <div id="campaign-status" style="font-size: 0.75rem; font-weight: 700; text-align: center; margin-top: 0.75rem;"></div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Insights Card -->
+        <section class="card insights-card">
+            <h2 class="card-title">Live Performance</h2>
+            <div class="insights-scroll" id="ab-results-container">
+                <div style="text-align: center; color: var(--text-muted); margin-top: 4rem;">
+                    <p style="font-size: 0.85rem; font-weight: 600;">No active campaign data</p>
+                    <p style="font-size: 0.75rem;">Start a campaign to see live insights here</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Logs Card -->
+        <section class="card logs-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2 class="card-title" style="margin: 0;">System Diagnostics</h2>
+                <button id="clear-logs" style="background: none; border: none; color: var(--primary); font-size: 0.7rem; font-weight: 800; cursor: pointer;">REFRESH</button>
+            </div>
+            <div class="terminal" id="log-display">
+                <div class="log-item info">Ready for deployment.</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Settings -->
+    <button class="settings-trigger" id="open-settings">⚙️</button>
+
+    <div class="modal-wrap" id="modal-wrap">
+        <div class="modal">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.5px;">Engine Settings</h2>
+                <button id="close-settings" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+            </div>
+            <form id="config-form">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label>Sender Name</label>
+                        <input type="text" id="config_display_name" class="input-field">
+                    </div>
+                    <div class="input-group">
+                        <label>Sender Email</label>
+                        <input type="email" id="config_sender_email" class="input-field">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>SMTP Host</label>
+                    <input type="text" id="config_smtp_host" class="input-field">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="input-group">
+                        <label>SMTP Port</label>
+                        <input type="number" id="config_smtp_port" class="input-field">
+                    </div>
+                    <div class="input-group">
+                        <label>Retry Count</label>
+                        <input type="number" id="config_retry_count" class="input-field">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>App Password</label>
+                    <input type="password" id="config_password" class="input-field" placeholder="••••••••••••">
+                </div>
+                <button type="submit" class="btn-launch" style="background: var(--success); margin-top: 1rem;">Save Configuration</button>
+                <div id="config-status" style="font-size: 0.75rem; font-weight: 700; text-align: center; margin-top: 0.75rem;"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/ui/script.js?v=1.2"></script>
+</body>
+</html>
